@@ -17,7 +17,14 @@
 </head>
 
 <body>
-
+<div class="topbar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="topbar-title">YOLO UNO Panel</div>
+  </div>
   <!-- Thanh bên -->
   <div class="sidebar">
     <div class="logo-container">
@@ -26,19 +33,21 @@
         alt="Logo">
     </div>
 
-    <div class="nav-item active" onclick="showSection('home', event)">🏠 <span>Trang chủ</span></div>
+        <div class="nav-item active" onclick="showSection('home', event)">🏠 <span>Trang chủ</span></div>
     <div class="nav-item" onclick="showSection('device', event)">⚡ <span>Thiết bị</span></div>
     <div class="nav-item" onclick="showSection('info', event)">ℹ️ <span>Thông tin</span></div>
     <div class="nav-item" onclick="showSection('settings', event)">⚙️ <span>Cài đặt</span></div>
-  </div>
-  <!-- thêm -->
-<div class="theme-toggle">
-  <label class="switch">
-    <input type="checkbox" id="themeSwitch">
-    <span class="slider"></span>
-  </label>
-  <span id="themeLabel">🌞 Light</span>
-</div>
+
+    <!-- Nút đổi Light/Dark NẰM TRONG SIDEBAR -->
+    <div class="theme-toggle">
+      <label class="switch">
+        <input type="checkbox" id="themeSwitch">
+        <span class="slider"></span>
+      </label>
+      <span id="themeLabel">🌞 Light</span>
+    </div>
+  </div> <!-- hết .sidebar -->
+
 
   <!-- Nội dung chính -->
   <div class="main-content">
@@ -111,13 +120,77 @@
 
     </div>
 
-    <!-- THÔNG TIN -->
+        <!-- THÔNG TIN -->
     <div id="info" class="section" style="display:none;">
       <header>
-        <h1>Thông tin thiết bị</h1>
-        <p>Chi tiết hệ thống và firmware sẽ hiển thị tại đây.</p>
+        <h1 class="device-title">Thông tin thiết bị</h1>
+        <p class="device-subtitle">Giám sát trạng thái phần cứng, mạng và cảm biến</p>
       </header>
+
+      <div class="info-grid">
+
+        <!-- THẺ HỆ THỐNG -->
+        <div class="info-card">
+          <h3>🧠 Hệ thống</h3>
+          <ul class="info-list">
+            <li><span>Board:</span> <strong id="info_board">–</strong></li>
+            <li><span>Chip ID:</span> <strong id="info_chip">–</strong></li>
+            <li><span>CPU Freq:</span> <strong id="info_cpu">–</strong></li>
+            <li><span>Uptime:</span> <strong id="info_uptime">–</strong></li>
+          </ul>
+        </div>
+
+        <!-- THẺ MẠNG -->
+        <div class="info-card">
+          <h3>📡 Mạng & Wi-Fi</h3>
+          <ul class="info-list">
+            <li><span>Mode:</span> <strong id="info_mode">–</strong></li>
+            <li><span>SSID:</span> <strong id="info_ssid">–</strong></li>
+            <li><span>IP:</span> <strong id="info_ip">–</strong></li>
+            <li><span>RSSI:</span> <strong id="info_rssi">–</strong></li>
+          </ul>
+        </div>
+
+        <!-- THẺ CẢM BIẾN -->
+        <div class="info-card">
+          <h3>🌡️ Cảm biến môi trường</h3>
+          <ul class="info-list">
+            <li><span>Nhiệt độ hiện tại:</span> <strong id="info_temp">–</strong></li>
+            <li><span>Độ ẩm hiện tại:</span> <strong id="info_hum">–</strong></li>
+            <li><span>Trạng thái nhiệt độ:</span> <strong id="info_temp_state">–</strong></li>
+            <li><span>Trạng thái độ ẩm:</span> <strong id="info_hum_state">–</strong></li>
+          </ul>
+        </div>
+
+        <!-- THẺ FIRMWARE / CLOUD -->
+        <div class="info-card">
+          <h3>⚙️ Firmware & Cloud</h3>
+          <ul class="info-list">
+            <li><span>Firmware:</span> <strong id="info_fw">–</strong></li>
+            <li><span>Build:</span> <strong id="info_build">–</strong></li>
+            <li><span>CoreIoT token:</span> <strong id="info_token">–</strong></li>
+            <li><span>CoreIoT status:</span> <strong id="info_cloud">–</strong></li>
+          </ul>
+        </div>
+<div class="info-card qr-card">
+  <h3>🔗 Kết nối nhanh</h3>
+  <p class="qr-desc">
+    Quét mã QR để mở giao diện cấu hình YOLO UNO trên điện thoại.
+  </p>
+
+  <div class="qr-box">
+    <!-- Dùng file tĩnh, luôn thấy được -->
+<img id="qrConnect" class="qr-image" src="/qr_ap.png" alt="QR Kết nối AP">
+  </div>
+
+  <div class="qr-text">
+    Địa chỉ: <span id="qrText">http://192.168.4.1</span>
+  </div>
+</div>
+
+      </div>
     </div>
+
 
     <!-- CÀI ĐẶT -->
     <div id="settings" class="section settings-section" style="display:none;">

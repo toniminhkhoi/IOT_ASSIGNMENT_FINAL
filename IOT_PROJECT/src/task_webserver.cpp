@@ -58,7 +58,10 @@ void connnectWSV() {
     server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(LittleFS, "/styles.css", "text/css");
     });
-
+// Ảnh QR AP
+    server.on("/qr_ap.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(LittleFS, "/qr_ap.png", "image/png");
+    });
     // Sensor API: read with mutex for RTOS safety
     server.on("/sensors", HTTP_GET, [](AsyncWebServerRequest *request) {
         float t, h;
@@ -78,10 +81,89 @@ void connnectWSV() {
         request->send(res);
     });
 
+    // ==================== /info API (MỚI) ====================
+    server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request) {
+        // 1. Lấy nhiệt độ / độ ẩm (giống /sensors)
+        float t, h;
+        if (xSemaphoreTake(xDataMutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+            t = glob_temperature;
+            h = glob_humidity;
+            xSemaphoreGive(xDataMutex);
+        } else {
+            t = glob_temperature;
+            h = glob_humidity;
+        }
+
+        // 2. Thông tin WiFi
+        String modeStr;
+        if (WiFi.getMode() == WIFI_AP)       modeStr = "AP";
+        else if (WiFi.getMode() == WIFI_STA) modeStr = "STA";
+        else                                 modeStr = "OFF";
+
+        String ipStr   = (WiFi.getMode() == WIFI_AP)
+                        ? WiFi.softAPIP().toString()
+                        : WiFi.localIP().toString();
+
+        String ssidStr = (WiFi.getMode() == WIFI_AP)
+                        ? String(SSID_AP)   // từ global.h
+                        : WIFI_SSID;        // từ global.h
+
+        long rssi = (WiFi.getMode() == WIFI_STA) ? WiFi.RSSI() : 0;
+
+        // 3. Uptime định dạng H:M:S
+        uint32_t upSec = millis() / 1000;
+        uint32_t upH   = upSec / 3600;
+        uint32_t upM   = (upSec % 3600) / 60;
+        uint32_t upS   = upSec % 60;
+        char uptimeBuf[32];
+        snprintf(uptimeBuf, sizeof(uptimeBuf), "%02uh %02um %02us", upH, upM, upS);
+
+        // 4. Thông tin firmware cơ bản
+        const char *fwVersion   = "YoloUNO RTOS v1.0";
+        const char *buildString = __DATE__ " " __TIME__;
+
+        // 5. Tạo JSON trả về
+        AsyncResponseStream *res = request->beginResponseStream("application/json");
+        res->printf(
+            "{"
+              "\"board\":\"ESP32-S3\","
+              "\"chip_id\":\"%llu\","
+              "\"cpu_freq\":\"%d MHz\","
+              "\"uptime\":\"%s\","
+              "\"net_mode\":\"%s\","
+              "\"ssid\":\"%s\","
+              "\"ip\":\"%s\","
+              "\"rssi\":%ld,"
+              "\"temp\":%.2f,"
+              "\"hum\":%.2f,"
+              "\"temp_state\":\"N/A\","
+              "\"hum_state\":\"N/A\","
+              "\"fw\":\"%s\","
+              "\"build\":\"%s\","
+              "\"coreiot_token\":\"N/A\","
+              "\"coreiot_status\":\"N/A\""
+            "}",
+            ESP.getEfuseMac(),
+            getCpuFrequencyMhz(),
+            uptimeBuf,
+            modeStr.c_str(),
+            ssidStr.c_str(),
+            ipStr.c_str(),
+            rssi,
+            t, h,
+            fwVersion,
+            buildString
+        );
+
+        request->send(res);
+    });
+    // ================== HẾT /info API ===================
+
     server.begin();
     ElegantOTA.begin(&server);
     webserverIsRunning = true;
 }
+
 
 // Stop web server
 void Webserver_stop() {

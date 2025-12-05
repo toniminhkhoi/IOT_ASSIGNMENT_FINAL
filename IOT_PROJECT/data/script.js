@@ -56,6 +56,10 @@ function onMessage(event) {
     }
 }
 
+// ==================== SIDEBAR TOGGLE (MOBILE) ====================
+function toggleSidebar() {
+    document.body.classList.toggle('sidebar-open');
+}
 
 // ==================== UI NAVIGATION ====================
 let relayList = [
@@ -124,6 +128,60 @@ else humIcon.style.color = "#1e88e5";                   // xanh đậm
         .catch(err => console.error('Lỗi /sensors:', err));
 }
 
+// ==================== DEVICE INFO PAGE ====================
+function loadDeviceInfo() {
+    fetch('/info')
+        .then(r => r.json())
+        .then(d => {
+            // HỆ THỐNG
+            document.getElementById('info_board').innerText = d.board || 'N/A';
+            document.getElementById('info_chip').innerText  = d.chip_id || 'N/A';
+            document.getElementById('info_cpu').innerText   = d.cpu_freq || 'N/A';
+            document.getElementById('info_uptime').innerText= d.uptime || 'N/A';
+
+            // MẠNG
+            document.getElementById('info_mode').innerText  = d.net_mode || 'N/A';
+            document.getElementById('info_ssid').innerText  = d.ssid || 'N/A';
+            document.getElementById('info_ip').innerText    = d.ip || 'N/A';
+            document.getElementById('info_rssi').innerText  = d.rssi || 'N/A';
+
+            // CẢM BIẾN
+            document.getElementById('info_temp').innerText =
+                (d.temp !== undefined ? d.temp.toFixed(1) + ' °C' : 'N/A');
+            document.getElementById('info_hum').innerText  =
+                (d.hum  !== undefined ? d.hum.toFixed(1) + ' %'  : 'N/A');
+            document.getElementById('info_temp_state').innerText = d.temp_state || 'N/A';
+            document.getElementById('info_hum_state').innerText  = d.hum_state || 'N/A';
+
+            // FIRMWARE / CLOUD
+            document.getElementById('info_fw').innerText    = d.fw || 'N/A';
+            document.getElementById('info_build').innerText = d.build || 'N/A';
+            document.getElementById('info_token').innerText = d.coreiot_token || 'N/A';
+            document.getElementById('info_cloud').innerText = d.coreiot_status || 'N/A';
+            // ====== QR CONNECT ======
+            const qrImg  = document.getElementById('qrConnect');
+            const qrText = document.getElementById('qrText');
+
+            // Ưu tiên dùng IP từ /info, fallback sang host hiện tại
+            const ipOrHost = d.ip && d.ip !== "0.0.0.0"
+                ? d.ip
+                : window.location.host;
+
+            const url = `http://${ipOrHost}`;
+            qrText.textContent = url;
+
+            // // Dùng dịch vụ tạo QR đơn giản (client tải ảnh từ internet)
+            // const qrApi = "https://api.qrserver.com/v1/create-qr-code/";
+            // const size  = "220x220";
+            // const qrUrl = `${qrApi}?size=${size}&data=${encodeURIComponent(url)}`;
+
+            // qrImg.src = qrUrl;
+        })
+        
+        .catch(err => {
+            console.error('Lỗi /info:', err);
+        });
+}
 
 // ======================= HIGH-END CHART + FULL AXIS ===========================
 
@@ -258,11 +316,20 @@ function updateCharts(temp, hum) {
 
 
 // ==================== LOAD SENSOR + RELAYS ====================
+// ==================== LOAD SENSOR + RELAYS + INFO ====================
 window.addEventListener('load', function () {
     renderRelays();
+
+    // Sensor
     updateSensorData();
     setInterval(updateSensorData, 3000);
+
+    // Device info
+    loadDeviceInfo();                 // gọi lần đầu khi mở web
+    setInterval(loadDeviceInfo, 10000);  // sau đó 10s cập nhật 1 lần
 });
+
+
 
 
 

@@ -45,7 +45,9 @@ body {
   display      : flex;
   align-items  : center;
   gap          : 12px;
+  box-sizing   : border-box;   /* 👉 thêm dòng này */
 }
+
 
 .nav-item.active {
   background: #fff;
@@ -410,11 +412,26 @@ body {
 }
 /* ====== DARK MODE TOGGLE ====== */
 .theme-toggle {
-  margin-top: auto;
-  padding: 20px 0;
+  margin-top: auto;               /* desktop: đẩy xuống cuối sidebar */
+  padding: 16px 12px 22px;
   text-align: center;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
+
+/* Light mode → chữ đen trên nền xám (khi ở main-content) nhưng giờ chỉ dùng trong sidebar nên mình chỉnh lại dưới mobile */
+#themeLabel {
+  color: black;
+  font-weight: 600;
+}
+
+body.dark #themeLabel {
+  color: white;
+}
+
 /* ====== THEME LABEL COLOR ====== */
 
 /* Light mode (bình thường) → chữ đen */
@@ -803,4 +820,424 @@ body.dark .page-title-glow {
 
     transition: 0.2s ease;
 }
+/* ===== INFO PAGE GRID ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  margin-top: 25px;
+}
 
+.info-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: 0.25s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(34,148,242,0.20);
+}
+
+.info-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+  color: #2294F2;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* ===== QR CONNECT CARD ===== */
+.qr-card {
+  text-align: center;
+}
+
+.qr-desc {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.qr-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0 10px;
+}
+
+.qr-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+
+.qr-text {
+  font-size: 13px;
+  color: #555;
+}
+
+.qr-text span {
+  font-weight: 600;
+  color: #2294F2;
+}
+
+/* DARK MODE CHO QR CARD */
+body.dark .qr-image {
+  background: #2a2a2a;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+body.dark .qr-text {
+  color: #ddd;
+}
+
+body.dark .qr-text span {
+  color: #00b4ff;
+}
+
+.info-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+
+.info-list li:last-child {
+  border-bottom: none;
+}
+
+.info-list span {
+  color: #777;
+}
+
+.info-list strong {
+  color: #333;
+}
+
+/* DARK MODE CHO INFO CARD */
+body.dark .info-card {
+  background: #262626;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+body.dark .info-card h3 {
+  color: #00b4ff;
+}
+
+body.dark .info-list span {
+  color: #bbbbbb;
+}
+
+body.dark .info-list strong {
+  color: #ffffff;
+}
+/* ===== TOPBAR (MOBILE) ===== */
+.topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #2294F2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+
+  /* THÊM: cố định trên cùng và nằm trên sidebar */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;   /* sidebar đang 1000 nên nút 3 gạch sẽ luôn nằm trên */
+}
+
+
+.topbar-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.menu-toggle {
+  width: 34px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: #fff;
+  transition: 0.25s ease;
+}
+
+/* Khi sidebar mở, biến hamburger thành dấu X nhẹ */
+body.sidebar-open .menu-toggle span:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+body.sidebar-open .menu-toggle span:nth-child(2) {
+  opacity: 0;
+}
+body.sidebar-open .menu-toggle span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+/* ===== RESPONSIVE CHO MOBILE ===== */
+@media (max-width: 768px) {
+
+  body {
+    flex-direction: column;     /* Sidebar + main-content xếp theo cột */
+    height: auto;
+  }
+
+  .topbar {
+    display: flex;              /* Hiện topbar trên mobile */
+  }
+
+  /* Sidebar thành menu trượt */
+/* SIDEBAR: menu trượt chiếm ~70% màn hình, không tràn */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 70vw;          /* ~70% chiều ngang màn hình */
+    max-width: 260px;     /* không quá rộng trên tablet */
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+
+    /* để menu dọc dễ nhìn */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 60px;    /* chừa chỗ cho status bar / header */
+  }
+
+  /* Khi mở menu */
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Nav-item full width, dễ bấm */
+  .nav-item {
+    width: 100%;               /* full trong sidebar */
+    margin: 6px 0;
+    border-radius: 0 20px 20px 0;  /* optional: bo góc bên phải cho đẹp */
+    justify-content: flex-start;
+    box-sizing: border-box;
+  }
+
+  /* Nội dung chính dưới thanh xanh, không bị đẩy ngang */
+  .main-content {
+    padding: 70px 12px 80px;
+  }
+
+  /* Các card 1 cột */
+  .gauges-container,
+  .device-list,
+  .info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .gauge-card,
+  .device-card,
+  .info-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+  /* Nút floating bớt to trên mobile */
+  .add-relay-btn {
+    width: 64px;
+    height: 64px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+/* ===== RESPONSIVE CHO MOBILE (DỌC) ===== */
+@media (max-width: 768px) {
+
+  /* Không dùng flex ngang nữa → nội dung full màn hình */
+  body {
+    display: block;       /* thay vì flex-direction: column */
+    height: auto;
+  }
+
+  .topbar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+  }
+
+  /* SIDEBAR: off-canvas, giấu hẳn ra ngoài khi đóng */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 230px;
+    transform: translateX(-110%);   /* -110% để khỏi bị hở mép */
+    transition: transform 0.3s ease;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 70px;              /* chừa chỗ cho logo / topbar */
+  }
+
+  /* Khi mở menu */
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  /* NAV ITEM: full chiều ngang, không bị thừa */
+  .nav-item {
+    width: 100%;
+    margin: 4px 0;
+    border-radius: 0;               /* card phẳng theo chiều ngang */
+    justify-content: flex-start;
+  }
+
+  /* Nội dung chính full width, không mất vùng bên trái */
+  .main-content {
+    padding: 80px 12px 80px;        /* chừa top cho thanh xanh */
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* Card xếp 1 cột như cũ */
+  .gauges-container,
+  .device-list,
+  .info-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .gauge-card,
+  .device-card,
+  .info-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Nút floating nhỏ lại cho mobile */
+  .add-relay-btn {
+    width: 64px;
+    height: 64px;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* ===== NÚT 3 GẠCH (HAMBURGER) ===== */
+.menu-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 36px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  display: none;             /* chỉ hiện trên mobile qua media query */
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  cursor: pointer;
+}
+
+/* ===== RESPONSIVE CHO MOBILE ===== */
+@media (max-width: 768px) {
+
+  body {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  /* Hiện nút 3 gạch trên mobile */
+  .menu-toggle {
+    display: flex;
+  }
+
+  /* Sidebar trượt từ trái ra, ẩn mặc định */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 230px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+
+  /* Khi body có class .sidebar-open → hiện sidebar */
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Nội dung chính chiếm full màn hình, có chừa chỗ cho status bar */
+  .main-content {
+    padding: 16px 12px 80px;
+  }
+
+  /* Các card xếp 1 cột cho dễ đọc */
+  .gauges-container,
+  .device-list,
+  .info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .gauge-card,
+  .device-card,
+  .info-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .theme-toggle {
+    width: 100%;
+    margin-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    box-sizing: border-box;
+  }
+
+  /* Trên mobile label nằm trong panel xanh nên cho luôn màu trắng */
+  #themeLabel {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
